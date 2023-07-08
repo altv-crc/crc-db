@@ -1,10 +1,18 @@
 import * as alt from 'alt-server';
 import * as crc from '@stuyk/cross-resource-cache';
 
-const databaseName = process.env.DB_NAME ?? 'altv';
-const connectionString = process.env.DB_NAME ?? 'mongodb://localhost:27017';
+const username = encodeURIComponent('username');
+const password = encodeURIComponent('password'); // Passwords should never be hardcoded! Use Environment instead
+const databaseName = 'altv';
+const databaseServer = 'localhost:27017';
 
-crc.database.connect(connectionString, databaseName);
+let connectionString = "";
+
+if (username !== "" && password !== "") {
+    connectionString = `${username}:${password}@${databaseServer}`
+}
+crc.database.connect(`mongodb://${connectionString === "" ? databaseServer : connectionString}`, databaseName);
+
 crc.database.onReady(() => {
     alt.log(`~c~[CRC] Initialized Database Successfully!`);
 });
